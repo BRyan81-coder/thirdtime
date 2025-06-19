@@ -1,26 +1,21 @@
-
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
-    try:
-        data = request.get_json()
-        filename = data.get('filename')
-        content = data.get('content')
+    data = request.get_json()
+    filename = data.get('filename', 'unknown')
+    content = data.get('content', '')
 
-        # Mock logic: detect file type and return summary
-        if filename.endswith('.pdf'):
-            summary = "PDF detected. Mock summary generated."
-        elif filename.endswith('.docx'):
-            summary = "Word document detected. Mock summary generated."
-        else:
-            summary = "Unknown file type."
+    # Mock summary based on file type or content length
+    summary = {
+        "filename": filename,
+        "content_length": len(content),
+        "summary": f"Received file '{filename}' with {len(content)} characters of content."
+    }
 
-        return jsonify({"filename": filename, "summary": summary})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return jsonify(summary)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)
